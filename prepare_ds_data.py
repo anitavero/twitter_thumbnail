@@ -4,7 +4,7 @@ import numpy as np
 import argh
 
 
-HOME_DIR = '/Users/anitavero/projects/twitter_thumbnail'
+HOME_DIR = os.path.dirname(__file__)
 DATA_DIR = HOME_DIR + '/data'
 
 
