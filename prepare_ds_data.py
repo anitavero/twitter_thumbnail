@@ -21,8 +21,8 @@ def load_ds(dir=DATA_DIR):
     return dsa
 
 
-def most_common_topics(n=16):
-    dsa = load_ds()
+def most_common_topics(n=16, dir=DATA_DIR):
+    dsa = load_ds(dir)
     topics = Counter(dsa['topics']).most_common(n)
     topics = [t.replace('/', '_') for t, _ in topics]
     return topics
