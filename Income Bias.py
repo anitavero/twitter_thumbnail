@@ -775,7 +775,7 @@ for topic in topics:
 
 
     # change the setting here
-    # NUM_ITERATION = 5000
+    NUM_ITERATION = 5
     FIXED_HEIGHT = (
         None
     )  # if we want to scale each image to the same fixed height, put a number such as 256 here
