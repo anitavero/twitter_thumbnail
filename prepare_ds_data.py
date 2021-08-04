@@ -9,8 +9,8 @@ HOME_DIR = os.path.curdir
 DATA_DIR = HOME_DIR + '/data'
 
 
-def load_ds():
-    wb = load_workbook(filename=os.path.join(DATA_DIR, 'DS images to Anita without country.xlsx'))
+def load_ds(dir=DATA_DIR):
+    wb = load_workbook(filename=os.path.join(dir, 'DS images to Anita without country.xlsx'))
     ds = []
     rows = list(wb['Sheet1'].rows)
     for row in rows[1:]:
@@ -30,7 +30,7 @@ def wget_topic_images(topic, save_dir):
 
 
 def create_income_quantile_images_dict(topic, img_dir, quantile=4):
-    dsa = load_ds()
+    dsa = load_ds(img_dir)
     dsa_t = dsa[np.where(dsa['topics'] == topic)]
     q = int(len(dsa_t) / quantile)
     dsa_t.sort(order='income')
