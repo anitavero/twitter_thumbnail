@@ -24,7 +24,7 @@ import sys
 import time
 from pathlib import Path
 
-print(sys.path)
+# print(sys.path)
 # !pip install argh
 sys.path.append('/home/river/twitter_thumbnail')
 import prepare_ds_data as prep_ds
@@ -775,7 +775,7 @@ for topic in topics:
 
 
     # change the setting here
-    NUM_ITERATION = 5000
+    # NUM_ITERATION = 5000
     FIXED_HEIGHT = (
         None
     )  # if we want to scale each image to the same fixed height, put a number such as 256 here
