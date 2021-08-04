@@ -40,6 +40,7 @@ def wget_topic_images(topic, save_dir):
 def wget_most_common_topic_images(save_dir, n=16):
     topics = most_common_topics(n)
     for t in topics:
+        print('########################## ' + t + ' ##########################')
         wget_topic_images(t, save_dir)
 
 
