@@ -24,7 +24,7 @@ def load_ds(dir=DATA_DIR):
 def most_common_topics(n=16):
     dsa = load_ds()
     topics = Counter(dsa['topics']).most_common(n)
-    topics = [t for t, _ in topics]
+    topics = [t.replace('/', '_') for t, _ in topics]
     return topics
 
 
@@ -34,7 +34,7 @@ def wget_topic_images(topic, save_dir):
     fn = topic + 'urls.txt'
     with open(fn, 'w') as f:
         f.write('\n'.join(urls))
-    os.system(f'wget -v -i {fn} -P {save_dir}')
+    os.system(f'wget -nc -v -i {fn} -P {save_dir}')
 
 
 def wget_most_common_topic_images(save_dir, n=16):
