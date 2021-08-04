@@ -643,7 +643,7 @@ def compute_saliency_stats(
 
 
 # change the setting here
-NUM_ITERATION = 10
+NUM_ITERATION = 5
 FIXED_HEIGHT = (
     256
 )  # if we want to scale each image to the same fixed height, put a number such as 256 here
@@ -654,6 +654,8 @@ DIM_BOUND = None
 topics = prep_ds.most_common_topics(n=3, dir=IMG_DIR_PATH)
 
 for topic in topics:
+
+    NUM_ITERATION = 5
 
     SETTING_NAME = f"{topic}_fixed_height_intersect"  # for saving results and plots
 
