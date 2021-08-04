@@ -5,7 +5,7 @@ import argh
 import pandas as pd
 
 
-HOME_DIR = os.path.dirname(__file__)
+HOME_DIR = os.path.curdir
 DATA_DIR = HOME_DIR + '/data'
 
 
