@@ -2,6 +2,7 @@ import os, sys
 from openpyxl import load_workbook
 import numpy as np
 import argh
+import pandas as pd
 
 
 HOME_DIR = os.path.dirname(__file__)
@@ -26,6 +27,22 @@ def wget_topic_images(topic, save_dir):
     with open(fn, 'w') as f:
         f.write('\n'.join(urls))
     os.system(f'wget -v -i {fn} -P {save_dir}')
+
+
+def create_income_quantile_images_dict(topic, img_dir, quantile=4):
+    dsa = load_ds()
+    dsa_t = dsa[np.where(dsa['topics'] == topic)]
+    q = int(len(dsa_t) / quantile)
+    dsa_t.sort(order='income')
+    dsa_cheap = dsa_t[:q]
+    dsa_expensive = dsa_t[-q:]
+    income_quantile_images_dict = {}
+    income_quantile_images_dict['cheap'] = \
+        pd.DataFrame(data={'path': [os.path.join(img_dir, os.path.basename(url)) for url in dsa_cheap['imageUrl']]})
+    income_quantile_images_dict['expensive'] = \
+        pd.DataFrame(data={'path': [os.path.join(img_dir, os.path.basename(url)) for url in dsa_expensive['imageUrl']]})
+    return income_quantile_images_dict
+
 
 
 if __name__ == '__main__':
