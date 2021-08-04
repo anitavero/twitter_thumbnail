@@ -37,10 +37,14 @@ def create_income_quantile_images_dict(topic, img_dir, quantile=4):
     dsa_cheap = dsa_t[:q]
     dsa_expensive = dsa_t[-q:]
     income_quantile_images_dict = {}
+
+    def img_path(url):
+       return os.path.join(img_dir, os.path.basename(url))
+
     income_quantile_images_dict['cheap'] = \
-        pd.DataFrame(data={'path': [os.path.join(img_dir, os.path.basename(url)) for url in dsa_cheap['imageUrl']]})
+        pd.DataFrame(data={'path': list(filter(os.path.exists, [img_path(url) for url in dsa_cheap['imageUrl']]))})
     income_quantile_images_dict['expensive'] = \
-        pd.DataFrame(data={'path': [os.path.join(img_dir, os.path.basename(url)) for url in dsa_expensive['imageUrl']]})
+        pd.DataFrame(data={'path': list(filter(os.path.exists, [img_path(url) for url in dsa_expensive['imageUrl']]))})
     return income_quantile_images_dict
 
 
