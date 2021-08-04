@@ -1,6 +1,7 @@
 import os, sys
 from openpyxl import load_workbook
 import numpy as np
+import argh
 
 
 HOME_DIR = '/Users/anitavero/projects/twitter_thumbnail'
@@ -25,3 +26,7 @@ def wget_topic_images(topic, save_dir):
     with open(fn, 'w') as f:
         f.write('\n'.join(urls))
     os.system(f'wget -v -i {fn} -P {save_dir}')
+
+
+if __name__ == '__main__':
+    argh.dispatch_commands([wget_topic_images])
