@@ -643,7 +643,7 @@ def compute_saliency_stats(
 
 
 # change the setting here
-NUM_ITERATION = 5
+NUM_ITERATION = 10
 FIXED_HEIGHT = (
     256
 )  # if we want to scale each image to the same fixed height, put a number such as 256 here
@@ -1041,7 +1041,7 @@ for topic in topics:
     group_to_plot = all_stats_dict.keys()
     plot_group_saliency_histogram(
         group_to_plot,
-        file_id="black",
+        file_id=topic,
         bins=50,
         alpha=0.5,
         density=True,
@@ -1051,20 +1051,20 @@ for topic in topics:
     )
 
 
-    # In[214]:
-
-
-    group_to_plot = all_stats_dict.keys()
-    plot_group_saliency_histogram(
-        group_to_plot,
-        file_id="white",
-        bins=50,
-        alpha=0.5,
-        density=True,
-        lw=5,
-        cumulative=True,
-        histtype="step",
-    )
+    # # In[214]:
+    #
+    #
+    # group_to_plot = all_stats_dict.keys()
+    # plot_group_saliency_histogram(
+    #     group_to_plot,
+    #     file_id="white",
+    #     bins=50,
+    #     alpha=0.5,
+    #     density=True,
+    #     lw=5,
+    #     cumulative=True,
+    #     histtype="step",
+    # )
 
 
 
