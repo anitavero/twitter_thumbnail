@@ -58,14 +58,14 @@ BIN_MAPS = {"Darwin": "mac", "Linux": "linux"}
 
 HOME_DIR = Path("../").expanduser()
 
-try:
-    import google.colab
-    get_ipython().system(' pip install pandas scikit-learn scikit-image statsmodels requests dash')
-    get_ipython().system(' [[ -d image-crop-analysis ]] || git clone https://github.com/twitter-research/image-crop-analysis.git')
-    HOME_DIR = Path("./image-crop-analysis").expanduser()
-    IN_COLAB = True
-except:
-    IN_COLAB = False
+# try:
+#     import google.colab
+#     get_ipython().system(' pip install pandas scikit-learn scikit-image statsmodels requests dash')
+#     get_ipython().system(' [[ -d image-crop-analysis ]] || git clone https://github.com/twitter-research/image-crop-analysis.git')
+#     HOME_DIR = Path("./image-crop-analysis").expanduser()
+#     IN_COLAB = True
+# except:
+#     IN_COLAB = False
 
 sys.path.append(str(HOME_DIR / "src"))
 bin_dir = HOME_DIR / Path("./bin")
@@ -75,165 +75,165 @@ data_dir = HOME_DIR / Path("./data/")
 data_dir.exists()
 
 
-# # Collecting and Cleaning Data
-
-# In[4]:
-
-
+# # # Collecting and Cleaning Data
+#
+# # In[4]:
+#
+#
 def get_filepaths(directory):
     file_paths = []  # List which will store all of the full filepaths.
     file_paths = [str(p) for p in Path(directory).glob("*")]
     return file_paths
 
 
-# ## Read and process Wiki image data
-
-# In[5]:
-
-
+# # ## Read and process Wiki image data
+#
+# # In[5]:
+#
+#
 # [Instruction]: out the folder directory which contains all the images here
 IMG_DIR_PATH = data_dir / "./images"
 print("Directory exists:", Path(IMG_DIR_PATH).exists())
 
 # get the list of all files path
 full_file_paths = get_filepaths(IMG_DIR_PATH)
+#
+#
+# # In[6]:
+#
 
-
-# In[6]:
-
-
-IMAGE_MAP_PATH = data_dir / "./dataset.tsv"
-print("File exists:", Path(IMAGE_MAP_PATH).exists())
-IMAGE_DATA_PATH = data_dir / "./dataset.json"
-print("File exists:", Path(IMAGE_DATA_PATH).exists())
-
-
-# In[7]:
-
-
-def read_wiki_img_data():
-    df = pd.read_csv(IMAGE_MAP_PATH, sep="\t")
-    df["path"] = df.local_path.apply(lambda x: IMG_DIR_PATH / x)
-
-    print(
-        "Reading finished. Cleaning .pdf mistakes:",
-        sum(df.local_path.apply(lambda x: x[-3:]) == "pdf"),
-        "entities filtered.",
-    )
-    df = df[
-        df.local_path.apply(lambda x: x[-3:]) != "pdf"
-    ]  # clean out one wrong example, if exists
-    return df
-
-
-wiki_pandas = read_wiki_img_data()
-wiki_pandas
-
-
-# In[8]:
-
-
-gender_map_dict = {"Q6581072": "female", "Q6581097": "male"}
-wiki_pandas.loc[:, "gender"] = wiki_pandas.sex_or_gender.map(gender_map_dict)
-
-
-# In[9]:
-
-
-ETHNIC_SIZE_THRESHOLD = 40
-ethnic_size_pandas = wiki_pandas.groupby("ethnic_group").size()
-print(
-    "top ethnic_group by size:\n", ethnic_size_pandas.sort_values(ascending=False)[:20]
-)
-ethnic_big_enough = ethnic_size_pandas[
-    ethnic_size_pandas.values >= ETHNIC_SIZE_THRESHOLD
-].index.values
-
-
-# In[10]:
-
-
-ethnic_details_map_dict = {
-    "Q127885": "Serbs: nation and South Slavic ethnic group formed in the Balkans",
-    "Q161652": "Japanase",
-    "Q190168": "Yoruba people: ethnic group of West Africa",
-    "Q42406": "English people: nation and ethnic group native to England",
-    "Q44806": "Ukrainians: East Slavic ethnic group native to Ukraine",
-    "Q49085": "African Americans: racial or ethnic group in the United States with African ancestry",
-    "Q539051": "Greeks: people of southeastern Europe",
-    "Q678551": "American Jews",
-    "Q726673": "Swedish-speaking population of Finland",
-    "Q7325": "Jewish",
-    "Q79797": "Armenians: ethnic group native to the Armenian Highland",
-    "Q179248": "Albanians",
-    "Q2325516": "Armenian American",
-}
-
-wiki_pandas["race_details"] = wiki_pandas["ethnic_group"].map(ethnic_details_map_dict)
-
-# mapping by https://www.census.gov/topics/population/race/about.html
-ethnic_race_map_dict = {
-    "Q127885": "white",
-    "Q161652": "asian",
-    "Q190168": "black",
-    "Q42406": "white",
-    "Q44806": "white",
-    "Q49085": "black",
-    "Q539051": "white",
-    "Q678551": "white",
-    "Q726673": "white",
-    "Q7325": "white",
-    "Q79797": "white",
-    "Q179248": "white",
-    "Q2325516": "white",
-}
-
-wiki_pandas["race"] = wiki_pandas["ethnic_group"].map(ethnic_race_map_dict)
-
-
-# In[11]:
-
-
-# cut if the group is too small
-GROUP_THRESHOLD = 0
-
-def get_grouped_images_dict_wiki(
-    wiki_pandas, by_columns=["occupation"], group_threshold=GROUP_THRESHOLD
-):
-    """
-    race_threshold: if the size of the group is less than the threshold, then ignore the group to be in the dictionary
-    """
-    grouped_images_dict = {}
-    grouped_images_race = wiki_pandas.groupby(by_columns)
-
-    for name, group in grouped_images_race:
-        print(name)
-        print("Size of the group:", len(group))
-        if group_threshold is not None:
-            if len(group) < group_threshold:
-                print("\tSize is smaller than", group_threshold, ". Skip this group.")
-                continue
-        grouped_images_dict[name] = group
-
-    return grouped_images_dict
-
-
-# In[12]:
-
-
-# choose your option here
-grouped_images_dict = get_grouped_images_dict_wiki(
-    wiki_pandas, by_columns=["occupation"]
-)
-
-
-# In[13]:
-
-
-vs = [v for k, v in grouped_images_dict.items()]
-type(vs[0])
-vs[0]
-# grouped_images_dict.keys()
+# IMAGE_MAP_PATH = data_dir / "./dataset.tsv"
+# print("File exists:", Path(IMAGE_MAP_PATH).exists())
+# IMAGE_DATA_PATH = data_dir / "./dataset.json"
+# print("File exists:", Path(IMAGE_DATA_PATH).exists())
+#
+#
+# # In[7]:
+#
+#
+# def read_wiki_img_data():
+#     df = pd.read_csv(IMAGE_MAP_PATH, sep="\t")
+#     df["path"] = df.local_path.apply(lambda x: IMG_DIR_PATH / x)
+#
+#     print(
+#         "Reading finished. Cleaning .pdf mistakes:",
+#         sum(df.local_path.apply(lambda x: x[-3:]) == "pdf"),
+#         "entities filtered.",
+#     )
+#     df = df[
+#         df.local_path.apply(lambda x: x[-3:]) != "pdf"
+#     ]  # clean out one wrong example, if exists
+#     return df
+#
+#
+# wiki_pandas = read_wiki_img_data()
+# wiki_pandas
+#
+#
+# # In[8]:
+#
+#
+# gender_map_dict = {"Q6581072": "female", "Q6581097": "male"}
+# wiki_pandas.loc[:, "gender"] = wiki_pandas.sex_or_gender.map(gender_map_dict)
+#
+#
+# # In[9]:
+#
+#
+# ETHNIC_SIZE_THRESHOLD = 40
+# ethnic_size_pandas = wiki_pandas.groupby("ethnic_group").size()
+# print(
+#     "top ethnic_group by size:\n", ethnic_size_pandas.sort_values(ascending=False)[:20]
+# )
+# ethnic_big_enough = ethnic_size_pandas[
+#     ethnic_size_pandas.values >= ETHNIC_SIZE_THRESHOLD
+# ].index.values
+#
+#
+# # In[10]:
+#
+#
+# ethnic_details_map_dict = {
+#     "Q127885": "Serbs: nation and South Slavic ethnic group formed in the Balkans",
+#     "Q161652": "Japanase",
+#     "Q190168": "Yoruba people: ethnic group of West Africa",
+#     "Q42406": "English people: nation and ethnic group native to England",
+#     "Q44806": "Ukrainians: East Slavic ethnic group native to Ukraine",
+#     "Q49085": "African Americans: racial or ethnic group in the United States with African ancestry",
+#     "Q539051": "Greeks: people of southeastern Europe",
+#     "Q678551": "American Jews",
+#     "Q726673": "Swedish-speaking population of Finland",
+#     "Q7325": "Jewish",
+#     "Q79797": "Armenians: ethnic group native to the Armenian Highland",
+#     "Q179248": "Albanians",
+#     "Q2325516": "Armenian American",
+# }
+#
+# wiki_pandas["race_details"] = wiki_pandas["ethnic_group"].map(ethnic_details_map_dict)
+#
+# # mapping by https://www.census.gov/topics/population/race/about.html
+# ethnic_race_map_dict = {
+#     "Q127885": "white",
+#     "Q161652": "asian",
+#     "Q190168": "black",
+#     "Q42406": "white",
+#     "Q44806": "white",
+#     "Q49085": "black",
+#     "Q539051": "white",
+#     "Q678551": "white",
+#     "Q726673": "white",
+#     "Q7325": "white",
+#     "Q79797": "white",
+#     "Q179248": "white",
+#     "Q2325516": "white",
+# }
+#
+# wiki_pandas["race"] = wiki_pandas["ethnic_group"].map(ethnic_race_map_dict)
+#
+#
+# # In[11]:
+#
+#
+# # cut if the group is too small
+# GROUP_THRESHOLD = 0
+#
+# def get_grouped_images_dict_wiki(
+#     wiki_pandas, by_columns=["occupation"], group_threshold=GROUP_THRESHOLD
+# ):
+#     """
+#     race_threshold: if the size of the group is less than the threshold, then ignore the group to be in the dictionary
+#     """
+#     grouped_images_dict = {}
+#     grouped_images_race = wiki_pandas.groupby(by_columns)
+#
+#     for name, group in grouped_images_race:
+#         print(name)
+#         print("Size of the group:", len(group))
+#         if group_threshold is not None:
+#             if len(group) < group_threshold:
+#                 print("\tSize is smaller than", group_threshold, ". Skip this group.")
+#                 continue
+#         grouped_images_dict[name] = group
+#
+#     return grouped_images_dict
+#
+#
+# # In[12]:
+#
+#
+# # choose your option here
+# grouped_images_dict = get_grouped_images_dict_wiki(
+#     wiki_pandas, by_columns=["occupation"]
+# )
+#
+#
+# # In[13]:
+#
+#
+# vs = [v for k, v in grouped_images_dict.items()]
+# type(vs[0])
+# vs[0]
+# # grouped_images_dict.keys()
 
 
 # # Setting up Tools to use
@@ -308,39 +308,39 @@ def attach_img(
 # In[146]:
 
 
-for ethnic in ethnic_big_enough:
-    print(
-        ethnic, ethnic_race_map_dict[ethnic], " size: ", ethnic_size_pandas.loc[ethnic]
-    )
-    display(
-        attach_img(
-            wiki_pandas[wiki_pandas.ethnic_group == ethnic]
-            .sample(n=2, replace=True)
-            .path.values,
-            fixed_height=100,
-        )[0]
-    )
-
-for gender in wiki_pandas.gender.unique():
-    print(gender)
-    display(
-        attach_img(
-            wiki_pandas[wiki_pandas.gender == gender]
-            .sample(n=2, replace=True)
-            .path.values,
-            fixed_height=100,
-        )[0]
-    )
+# for ethnic in ethnic_big_enough:
+#     print(
+#         ethnic, ethnic_race_map_dict[ethnic], " size: ", ethnic_size_pandas.loc[ethnic]
+#     )
+#     display(
+#         attach_img(
+#             wiki_pandas[wiki_pandas.ethnic_group == ethnic]
+#             .sample(n=2, replace=True)
+#             .path.values,
+#             fixed_height=100,
+#         )[0]
+#     )
+#
+# for gender in wiki_pandas.gender.unique():
+#     print(gender)
+#     display(
+#         attach_img(
+#             wiki_pandas[wiki_pandas.gender == gender]
+#             .sample(n=2, replace=True)
+#             .path.values,
+#             fixed_height=100,
+#         )[0]
+#     )
 
 
 # In[16]:
 
-
-(new_im, widths, heights) = attach_img(full_file_paths[0:2], fixed_height=None)
-display(new_im)
-print("widths:", widths)
-print("heights:", heights)
-
+#
+# (new_im, widths, heights) = attach_img(full_file_paths[0:2], fixed_height=None)
+# display(new_im)
+# print("widths:", widths)
+# print("heights:", heights)
+#
 
 # In[147]:
 
@@ -656,8 +656,8 @@ SETTING_NAME = "wiki_fixed_height_intersect"  # for saving results and plots
 # In[184]:
 
 
-from importlib import reload
-reload(prep_ds)
+# from importlib import reload
+# reload(prep_ds)
 grouped_images_dict = prep_ds.create_income_quantile_images_dict('Home', IMG_DIR_PATH)
 print(list(grouped_images_dict.values())[0])
 all_race_to_compare = list(grouped_images_dict.keys())
@@ -1060,45 +1060,6 @@ plot_group_saliency_histogram(
     cumulative=True,
     histtype="step",
 )
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
