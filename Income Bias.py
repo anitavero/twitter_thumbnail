@@ -413,7 +413,7 @@ def get_salient_info(img_path):
 # In[150]:
 
 
-print(full_file_paths)
+# print(full_file_paths)
 salient_scores = [
     point[2] for point in get_salient_info(full_file_paths[0])["all_salient_points"]
 ]
@@ -477,7 +477,7 @@ def compute_group_comparison(
         salient_info = None
         while salient_info is None:  # if cmd in get_salient_info failed, resample
             # Sample images as paths
-            sample_img_paths = [(df.sample())["path"].item() for df in df_list if df]
+            sample_img_paths = [(df.sample())["path"].item() for df in df_list if not df.empty]
             attached_img, widths, heights = attach_img(
                 sample_img_paths,
                 fixed_height=fixed_height,
