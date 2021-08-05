@@ -698,6 +698,7 @@ for topic in topics:
             max_salient_compare_dict[pair] = compute_comparison_from_group_name(
                 grouped_images_dict,
                 pair,
+                save_dir=SAVE_DIR_ATTACHED,
                 num_iterations=NUM_ITERATION,
                 save_setting=SETTING_NAME,
                 fixed_height=FIXED_HEIGHT,
@@ -799,6 +800,7 @@ for topic in topics:
         max_salient_all_groups_stats = compute_comparison_from_group_name(
             grouped_images_dict,
             grouped_images_dict.keys(),
+            save_dir=SAVE_DIR_ATTACHED,
             num_iterations=NUM_ITERATION,
             save_setting=SETTING_NAME,
             fixed_height=FIXED_HEIGHT,
