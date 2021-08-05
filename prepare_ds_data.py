@@ -31,7 +31,7 @@ def most_common_topics(n=16, dir=DATA_DIR):
 def wget_topic_images(topic, save_dir, verbose=False):
     dsa = load_ds()
     urls = dsa[np.where(dsa['topics'] == topic)]['imageUrl']
-    fn = '_'.join(topic) + '_urls.txt'
+    fn = topic.replace(' ', '_') + '_urls.txt'
     with open(fn, 'w') as f:
         f.write('\n'.join(urls))
     v = '-v' if verbose else ''
