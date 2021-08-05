@@ -665,32 +665,136 @@ for topic in topics[2:]:
     print("###################### ", topic, " ######################")
 
     grouped_images_dict = prep_ds.create_income_quantile_images_dict(topic, IMG_DIR_PATH)
-    print(list(grouped_images_dict.values())[0])
-    all_race_to_compare = list(grouped_images_dict.keys())
-    print(all_race_to_compare)
-    all_pairs_replicate_ori = [
-        (all_race_to_compare[i], all_race_to_compare[j])
-        for i in range(len(all_race_to_compare))
-        for j in range(i + 1, len(all_race_to_compare))
-    ]
+    dfs = [df for df in grouped_images_dict.values() if not df.empty]
+    if dfs == []:
+        print("EMPTY IMG PATHS.")
+    else:
+        all_race_to_compare = list(grouped_images_dict.keys())
+        print(all_race_to_compare)
+        all_pairs_replicate_ori = [
+            (all_race_to_compare[i], all_race_to_compare[j])
+            for i in range(len(all_race_to_compare))
+            for j in range(i + 1, len(all_race_to_compare))
+        ]
 
 
-    # In[185]:
+        # In[185]:
 
 
-    # another way, if we want to flip
-    all_pairs_replicate_ori
+        # another way, if we want to flip
+        all_pairs_replicate_ori
 
 
-    # In[186]:
+        # In[186]:
 
 
-    max_salient_compare_dict = {}
+        max_salient_compare_dict = {}
 
-    for pair in all_pairs_replicate_ori:
-        max_salient_compare_dict[pair] = compute_comparison_from_group_name(
+        for pair in all_pairs_replicate_ori:
+            max_salient_compare_dict[pair] = compute_comparison_from_group_name(
+                grouped_images_dict,
+                pair,
+                num_iterations=NUM_ITERATION,
+                save_setting=SETTING_NAME,
+                fixed_height=FIXED_HEIGHT,
+                pixel_size_upperbound=DIM_BOUND,
+            )
+
+
+        # In[190]:
+
+
+        def plot_pairwise_stats(
+            stat_dict,
+            figsize=None,
+            setting_name="unknown",
+            num_iteration="unknown",
+            confidence_interval_err=2,
+            middle_band_width=0.1,
+            x_label_angle=10,
+        ):
+            """
+          Given a dictionary of pairs of group and comparison statisitcs:
+          ('group1', 'group2'): [num_group1_is_picked, num_group2_is_picked]
+          Plot the bar graph on all pairs in this format on the probability p that group1 is picked.
+
+          The std error is assumed to be sqrt(p(1-p)/n), a confidence interval for Bernoulli inference.
+          The bar graph plot +- 2 std err, giving 95% confidence interval.
+
+          Args:
+              confidence_interval_err: the width of the confidence interval in the plotsetting_name: the setting of this experiment. Only used for the title of the plot and name of the saved figure
+              num_iteration: the number of samples used (int or str). Only used for the title of the plot and name of the saved figure
+              x_label_angle: angle to rotate the x label. May need to increase for lengthy labels.
+              middle_band_width: add two horizontal lines above and below 0.5 symmetrically to the plot, so creating a band of given width.
+                            If None, no line is added.
+          """
+            x_labels = [
+                pair[0] + "\nhigher than\n" + pair[1]
+                for pair in stat_dict.keys()
+            ]
+            prob = [val[0] / (val[0] + val[1]) for val in stat_dict.values()]
+            total = [(val[0] + val[1]) for val in stat_dict.values()]
+            y_err = [
+                confidence_interval_err * math.sqrt(p * (1 - p) / n)
+                for p, n in zip(prob, total)
+            ]
+            fig, ax = plt.subplots(figsize=figsize)
+            ax.bar(x_labels, prob, yerr=y_err)
+
+            if middle_band_width is not None:
+                ax.axhline(0.5, color="r", label=f"Demographic Parity")
+            plt.xlim(-0.5, len(x_labels) - 0.5)
+            plt.xticks(rotation=x_label_angle, fontsize=16)
+            ax.set_ylabel("Probability $\pm$ 2 * error", fontsize=20)
+            plt.ylim(0.0, 1.0)
+            plt.yticks(fontsize=16)
+            ax.yaxis.grid(True)
+            plt.legend(fontsize=16)
+            plt.title(f"Probabilities with {num_iteration} samples", fontsize=20)
+            plt.tight_layout()
+            plt.savefig(setting_name + "_n=" + str(num_iteration) + ".jpg")
+
+
+        # In[191]:
+
+
+        # max_salient_compare_dict
+
+
+        # In[192]:
+
+
+        plot_pairwise_stats(
+            max_salient_compare_dict,
+            setting_name=SETTING_NAME,
+            num_iteration=NUM_ITERATION,
+            figsize=(12, 4),
+            x_label_angle=0,
+        )
+
+
+        # ## Pairing across all groups at once
+
+        # In[195]:
+
+
+        # change the setting here
+        NUM_ITERATION = 5000
+        FIXED_HEIGHT = (
+            None
+        )  # if we want to scale each image to the same fixed height, put a number such as 256 here
+        DIM_BOUND = None
+        # if for large image, we want to scale it down so width and height are no more than a fixed number, e.g. put 1024 here.
+        # if not, very few large images are rejected from sampling as the size is too large for the model to accept
+        SETTING_NAME = f"{topic}_no_scaling_intersect_together"  # for saving results and plots
+
+
+        # In[196]:
+
+
+        max_salient_all_groups_stats = compute_comparison_from_group_name(
             grouped_images_dict,
-            pair,
+            grouped_images_dict.keys(),
             num_iterations=NUM_ITERATION,
             save_setting=SETTING_NAME,
             fixed_height=FIXED_HEIGHT,
@@ -698,374 +802,273 @@ for topic in topics[2:]:
         )
 
 
-    # In[190]:
-
-
-    def plot_pairwise_stats(
-        stat_dict,
-        figsize=None,
-        setting_name="unknown",
-        num_iteration="unknown",
-        confidence_interval_err=2,
-        middle_band_width=0.1,
-        x_label_angle=10,
-    ):
-        """
-      Given a dictionary of pairs of group and comparison statisitcs:
-      ('group1', 'group2'): [num_group1_is_picked, num_group2_is_picked]
-      Plot the bar graph on all pairs in this format on the probability p that group1 is picked.
-
-      The std error is assumed to be sqrt(p(1-p)/n), a confidence interval for Bernoulli inference.
-      The bar graph plot +- 2 std err, giving 95% confidence interval.
-
-      Args:
-          confidence_interval_err: the width of the confidence interval in the plotsetting_name: the setting of this experiment. Only used for the title of the plot and name of the saved figure
-          num_iteration: the number of samples used (int or str). Only used for the title of the plot and name of the saved figure
-          x_label_angle: angle to rotate the x label. May need to increase for lengthy labels.
-          middle_band_width: add two horizontal lines above and below 0.5 symmetrically to the plot, so creating a band of given width.
-                        If None, no line is added.
-      """
-        x_labels = [
-            pair[0] + "\nhigher than\n" + pair[1]
-            for pair in stat_dict.keys()
-        ]
-        prob = [val[0] / (val[0] + val[1]) for val in stat_dict.values()]
-        total = [(val[0] + val[1]) for val in stat_dict.values()]
-        y_err = [
-            confidence_interval_err * math.sqrt(p * (1 - p) / n)
-            for p, n in zip(prob, total)
-        ]
-        fig, ax = plt.subplots(figsize=figsize)
-        ax.bar(x_labels, prob, yerr=y_err)
-
-        if middle_band_width is not None:
-            ax.axhline(0.5, color="r", label=f"Demographic Parity")
-        plt.xlim(-0.5, len(x_labels) - 0.5)
-        plt.xticks(rotation=x_label_angle, fontsize=16)
-        ax.set_ylabel("Probability $\pm$ 2 * error", fontsize=20)
-        plt.ylim(0.0, 1.0)
-        plt.yticks(fontsize=16)
-        ax.yaxis.grid(True)
-        plt.legend(fontsize=16)
-        plt.title(f"Probabilities with {num_iteration} samples", fontsize=20)
-        plt.tight_layout()
-        plt.savefig(setting_name + "_n=" + str(num_iteration) + ".jpg")
-
-
-    # In[191]:
-
-
-    # max_salient_compare_dict
-
-
-    # In[192]:
-
-
-    plot_pairwise_stats(
-        max_salient_compare_dict,
-        setting_name=SETTING_NAME,
-        num_iteration=NUM_ITERATION,
-        figsize=(12, 4),
-        x_label_angle=0,
-    )
-
-
-    # ## Pairing across all groups at once
-
-    # In[195]:
-
-
-    # change the setting here
-    NUM_ITERATION = 5000
-    FIXED_HEIGHT = (
-        None
-    )  # if we want to scale each image to the same fixed height, put a number such as 256 here
-    DIM_BOUND = None
-    # if for large image, we want to scale it down so width and height are no more than a fixed number, e.g. put 1024 here.
-    # if not, very few large images are rejected from sampling as the size is too large for the model to accept
-    SETTING_NAME = f"{topic}_no_scaling_intersect_together"  # for saving results and plots
-
-
-    # In[196]:
-
-
-    max_salient_all_groups_stats = compute_comparison_from_group_name(
-        grouped_images_dict,
-        grouped_images_dict.keys(),
-        num_iterations=NUM_ITERATION,
-        save_setting=SETTING_NAME,
-        fixed_height=FIXED_HEIGHT,
-        pixel_size_upperbound=DIM_BOUND,
-    )
-
-
-    # In[197]:
-
-
-    max_salient_all_groups_dict = {
-        group: stat
-        for group, stat in zip(grouped_images_dict.keys(), max_salient_all_groups_stats)
-    }
-
-
-    # In[198]:
-
-
-    def plot_dict_values(
-        stat_dict,
-        figsize=None,
-        setting_name="unknown",
-        num_iteration="unknown",
-        confidence_interval_err=2,
-        middle_band_width=0.1,
-        x_label_angle=10,
-    ):
-        x_labels = [group_name for group_name in stat_dict.keys()]
-        print(x_labels)
-        total = sum(stat_dict.values())
-        print(type(total), type(list(stat_dict.values())))
-        prob = list(stat_dict.values()) / total
-        y_err = [confidence_interval_err * math.sqrt(p * (1 - p) / total) for p in prob]
-
-        fig, ax = plt.subplots(figsize=figsize)
-        ax.bar(x_labels, prob, yerr=y_err)
-
-        ax.plot(
-            [-0.5, len(x_labels) - 0.5],
-            np.full(2, 1 / len(x_labels)),
-            "r",
-            label=f"average",
-        )
-
-        plt.xticks(rotation=x_label_angle, fontsize=16)
-        ax.set_ylabel("Probability $\pm$ 2 * error", fontsize=20)
-        plt.ylim(0.0, 1.0)
-        ax.yaxis.grid(True)
-        plt.yticks(fontsize=16)
-        plt.legend(fontsize=16)
-        plt.title(f"Probabilities with {num_iteration} samples", fontsize=20)
-        plt.tight_layout()
-        plt.savefig(setting_name + "_n=" + str(num_iteration) + ".jpg")
-
-
-    # In[199]:
-
-    #
-    # max_salient_all_groups_stats
-    #
-    #
-    # # In[200]:
-    #
-    #
-    # max_salient_all_groups_dict
-
-
-    # In[201]:
-
-
-    plot_dict_values(
-        max_salient_all_groups_dict,
-        setting_name=SETTING_NAME,
-        num_iteration=NUM_ITERATION,
-        figsize=(12, 4),
-        x_label_angle=0,
-    )
-
-
-    # ## Stats of saliency scores
-
-    # In[204]:
-
-
-    # change the setting here
-    NUM_ITERATION = None # None if want to do whole thing
-    FIXED_HEIGHT = (
-        None
-    )  # if we want to scale each image to the same fixed height, put a number such as 256 here
-    DIM_BOUND = None
-    # if for large image, we want to scale it down so width and height are no more than a fixed number, e.g. put 1024 here.
-    # if not, very few large images are rejected from sampling as the size is too large for the model to accept
-    SETTING_NAME = f"{topic}_no_scaling_intersect_stat"  # for saving results and plots
-
-
-    # In[205]:
-
-
-    all_stats_dict = {}
-    for key in grouped_images_dict.keys():
-        print("Computing stats for:", key)
-        file_path_list = grouped_images_dict[key].path.values.tolist()
-        all_stats_dict[key] = compute_saliency_stats(
-            file_path_list,
-            sample=NUM_ITERATION,
-            percentile_queries=[50, 95, 100],
-            fixed_height=None,
-            pixel_size_upperbound=None,
-            save_dir=SAVE_DIR_ATTACHED,
-            log_every=100,
-            print_summary=True,
-        )
-
-
-    # In[206]:
-
-
-    group_to_plot = all_stats_dict.keys()
-    for col_name in next(
-        iter(all_stats_dict.values())
-    ).columns:  # columns from any pandas dataframe
-        for key in group_to_plot:
-            pandas_data = all_stats_dict[key]
-            plt.hist(
-                pandas_data[col_name],
-                alpha=0.35,
-                density=True,
-                label=str(key) + " on " + str(col_name),
-                bins=50,
-            )
-        plt.ylabel("frequency")
-        plt.title("Hist of " + str(group_to_plot) + " on saliency " + str(col_name))
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
-        plt.savefig(SETTING_NAME + "_n=" + str(NUM_ITERATION) + ".jpg")
-
-
-    # In[207]:
-
-
-    def prob_a_less_than_b(a, b):
-        """
-        Given two lists a,b, calculate the probability that
-        random samples x,y from a,b will satisfies a < b
-
-        Clculating this exactly for lists of length n, m takes runtime O(n log n + m log m) (for sorting),
-        then O(n + m) in addition (without sorting)
-        """
-        a = sorted(a)
-        b = sorted(b)
-
-        prob = 0
-        j = 0  # index of b that keeps moving till x > y
-        for i, x in enumerate(a):
-            while (j < len(b)) and (x >= b[j]):
-                j += 1
-            prob += (len(b) - j) / (len(a) * len(b))
-
-        return prob
-
-
-    # In[208]:
-
-
-    group_list = list(all_stats_dict.keys())
-    for i in range(len(group_list)):
-        for j in range(i + 1, len(group_list)):
-            print(
-                "Probability that group",
-                group_list[i],
-                ">=",
-                group_list[j],
-                "is",
-                1
-                - prob_a_less_than_b(
-                    all_stats_dict[group_list[i]]["100%_tile"].values,
-                    all_stats_dict[group_list[j]]["100%_tile"].values,
-                ),
+        # In[197]:
+
+
+        max_salient_all_groups_dict = {
+            group: stat
+            for group, stat in zip(grouped_images_dict.keys(), max_salient_all_groups_stats)
+        }
+
+
+        # In[198]:
+
+
+        def plot_dict_values(
+            stat_dict,
+            figsize=None,
+            setting_name="unknown",
+            num_iteration="unknown",
+            confidence_interval_err=2,
+            middle_band_width=0.1,
+            x_label_angle=10,
+        ):
+            x_labels = [group_name for group_name in stat_dict.keys()]
+            print(x_labels)
+            total = sum(stat_dict.values())
+            print(type(total), type(list(stat_dict.values())))
+            prob = list(stat_dict.values()) / total
+            y_err = [confidence_interval_err * math.sqrt(p * (1 - p) / total) for p in prob]
+
+            fig, ax = plt.subplots(figsize=figsize)
+            ax.bar(x_labels, prob, yerr=y_err)
+
+            ax.plot(
+                [-0.5, len(x_labels) - 0.5],
+                np.full(2, 1 / len(x_labels)),
+                "r",
+                label=f"average",
             )
 
-
-    # In[209]:
-
-
-    group_list = list(all_stats_dict.keys())
-    for i in range(len(group_list)):
-        for j in range(i + 1, len(group_list)):
-            print(
-                "Probability that group",
-                group_list[i],
-                ">=",
-                group_list[j],
-                "is",
-                1
-                - prob_a_less_than_b(
-                    all_stats_dict[group_list[i]]["95%_tile"].values,
-                    all_stats_dict[group_list[j]]["95%_tile"].values,
-                ),
-            )
-
-
-    # In[210]:
-
-
-    for g, df_t in all_stats_dict.items():
-        out_path = f"./all_stats_dict_{g}.tsv"
-        print(out_path)
-        df_t.to_csv(out_path, sep="\t")
-
-
-    # In[211]:
-
-
-    print(f"Setting = {SETTING_NAME}")
-
-
-    # In[212]:
-
-
-    def plot_group_saliency_histogram(
-        group_to_plot, col_names=None, col_name_title_map=None, file_id=None, **hist_kwargs
-    ):
-        if col_names is None:
-            col_names = ["50%_tile", "95%_tile", "100%_tile", "mean"]
-        if col_name_title_map is None:
-            col_name_title_map = {"50%_tile": "median", "100%_tile": "max"}
-        for col_name in col_names:  # columns from any pandas dataframe
-            plt_title = col_name_title_map.get(col_name, col_name)
-            fig = plt.figure(figsize=(5, 2))
-            for key in group_to_plot:
-                g = key
-                out_path = f"./all_stats_dict_{g}.tsv"
-                pandas_data = pd.read_csv(out_path, sep="\t", index_col=0)
-                plt.hist(pandas_data[col_name], label=f"{g}", **hist_kwargs)
-            plt.ylabel("frequency")
-            plt.title(f"Distribution of {plt_title} saliency")
-            plt.legend(loc="upper left")
+            plt.xticks(rotation=x_label_angle, fontsize=16)
+            ax.set_ylabel("Probability $\pm$ 2 * error", fontsize=20)
+            plt.ylim(0.0, 1.0)
+            ax.yaxis.grid(True)
+            plt.yticks(fontsize=16)
+            plt.legend(fontsize=16)
+            plt.title(f"Probabilities with {num_iteration} samples", fontsize=20)
             plt.tight_layout()
-            plt.savefig(f"saliency_dist_income_dif_on_{file_id}_{plt_title}.png")
+            plt.savefig(setting_name + "_n=" + str(num_iteration) + ".jpg")
+
+
+        # In[199]:
+
+        #
+        # max_salient_all_groups_stats
+        #
+        #
+        # # In[200]:
+        #
+        #
+        # max_salient_all_groups_dict
+
+
+        # In[201]:
+
+
+        plot_dict_values(
+            max_salient_all_groups_dict,
+            setting_name=SETTING_NAME,
+            num_iteration=NUM_ITERATION,
+            figsize=(12, 4),
+            x_label_angle=0,
+        )
+
+
+        # ## Stats of saliency scores
+
+        # In[204]:
+
+
+        # change the setting here
+        NUM_ITERATION = None # None if want to do whole thing
+        FIXED_HEIGHT = (
+            None
+        )  # if we want to scale each image to the same fixed height, put a number such as 256 here
+        DIM_BOUND = None
+        # if for large image, we want to scale it down so width and height are no more than a fixed number, e.g. put 1024 here.
+        # if not, very few large images are rejected from sampling as the size is too large for the model to accept
+        SETTING_NAME = f"{topic}_no_scaling_intersect_stat"  # for saving results and plots
+
+
+        # In[205]:
+
+
+        all_stats_dict = {}
+        for key in grouped_images_dict.keys():
+            print("Computing stats for:", key)
+            file_path_list = grouped_images_dict[key].path.values.tolist()
+            all_stats_dict[key] = compute_saliency_stats(
+                file_path_list,
+                sample=NUM_ITERATION,
+                percentile_queries=[50, 95, 100],
+                fixed_height=None,
+                pixel_size_upperbound=None,
+                save_dir=SAVE_DIR_ATTACHED,
+                log_every=100,
+                print_summary=True,
+            )
+
+
+        # In[206]:
+
+
+        group_to_plot = all_stats_dict.keys()
+        for col_name in next(
+            iter(all_stats_dict.values())
+        ).columns:  # columns from any pandas dataframe
+            for key in group_to_plot:
+                pandas_data = all_stats_dict[key]
+                plt.hist(
+                    pandas_data[col_name],
+                    alpha=0.35,
+                    density=True,
+                    label=str(key) + " on " + str(col_name),
+                    bins=50,
+                )
+            plt.ylabel("frequency")
+            plt.title("Hist of " + str(group_to_plot) + " on saliency " + str(col_name))
+            plt.legend()
+            plt.tight_layout()
             plt.show()
+            plt.savefig(SETTING_NAME + "_n=" + str(NUM_ITERATION) + ".jpg")
 
 
-    # In[213]:
+        # In[207]:
 
 
-    group_to_plot = all_stats_dict.keys()
-    plot_group_saliency_histogram(
-        group_to_plot,
-        file_id=topic,
-        bins=50,
-        alpha=0.5,
-        density=True,
-        lw=5,
-        cumulative=True,
-        histtype="step",
-    )
+        def prob_a_less_than_b(a, b):
+            """
+            Given two lists a,b, calculate the probability that
+            random samples x,y from a,b will satisfies a < b
+
+            Clculating this exactly for lists of length n, m takes runtime O(n log n + m log m) (for sorting),
+            then O(n + m) in addition (without sorting)
+            """
+            a = sorted(a)
+            b = sorted(b)
+
+            prob = 0
+            j = 0  # index of b that keeps moving till x > y
+            for i, x in enumerate(a):
+                while (j < len(b)) and (x >= b[j]):
+                    j += 1
+                prob += (len(b) - j) / (len(a) * len(b))
+
+            return prob
 
 
-    # # In[214]:
-    #
-    #
-    # group_to_plot = all_stats_dict.keys()
-    # plot_group_saliency_histogram(
-    #     group_to_plot,
-    #     file_id="white",
-    #     bins=50,
-    #     alpha=0.5,
-    #     density=True,
-    #     lw=5,
-    #     cumulative=True,
-    #     histtype="step",
-    # )
+        # In[208]:
+
+
+        group_list = list(all_stats_dict.keys())
+        for i in range(len(group_list)):
+            for j in range(i + 1, len(group_list)):
+                print(
+                    "Probability that group",
+                    group_list[i],
+                    ">=",
+                    group_list[j],
+                    "is",
+                    1
+                    - prob_a_less_than_b(
+                        all_stats_dict[group_list[i]]["100%_tile"].values,
+                        all_stats_dict[group_list[j]]["100%_tile"].values,
+                    ),
+                )
+
+
+        # In[209]:
+
+
+        group_list = list(all_stats_dict.keys())
+        for i in range(len(group_list)):
+            for j in range(i + 1, len(group_list)):
+                print(
+                    "Probability that group",
+                    group_list[i],
+                    ">=",
+                    group_list[j],
+                    "is",
+                    1
+                    - prob_a_less_than_b(
+                        all_stats_dict[group_list[i]]["95%_tile"].values,
+                        all_stats_dict[group_list[j]]["95%_tile"].values,
+                    ),
+                )
+
+
+        # In[210]:
+
+
+        for g, df_t in all_stats_dict.items():
+            out_path = f"./all_stats_dict_{g}.tsv"
+            print(out_path)
+            df_t.to_csv(out_path, sep="\t")
+
+
+        # In[211]:
+
+
+        print(f"Setting = {SETTING_NAME}")
+
+
+        # In[212]:
+
+
+        def plot_group_saliency_histogram(
+            group_to_plot, col_names=None, col_name_title_map=None, file_id=None, **hist_kwargs
+        ):
+            if col_names is None:
+                col_names = ["50%_tile", "95%_tile", "100%_tile", "mean"]
+            if col_name_title_map is None:
+                col_name_title_map = {"50%_tile": "median", "100%_tile": "max"}
+            for col_name in col_names:  # columns from any pandas dataframe
+                plt_title = col_name_title_map.get(col_name, col_name)
+                fig = plt.figure(figsize=(5, 2))
+                for key in group_to_plot:
+                    g = key
+                    out_path = f"./all_stats_dict_{g}.tsv"
+                    pandas_data = pd.read_csv(out_path, sep="\t", index_col=0)
+                    plt.hist(pandas_data[col_name], label=f"{g}", **hist_kwargs)
+                plt.ylabel("frequency")
+                plt.title(f"Distribution of {plt_title} saliency")
+                plt.legend(loc="upper left")
+                plt.tight_layout()
+                plt.savefig(f"saliency_dist_income_dif_on_{file_id}_{plt_title}.png")
+                plt.show()
+
+
+        # In[213]:
+
+
+        group_to_plot = all_stats_dict.keys()
+        plot_group_saliency_histogram(
+            group_to_plot,
+            file_id=topic,
+            bins=50,
+            alpha=0.5,
+            density=True,
+            lw=5,
+            cumulative=True,
+            histtype="step",
+        )
+
+
+        # # In[214]:
+        #
+        #
+        # group_to_plot = all_stats_dict.keys()
+        # plot_group_saliency_histogram(
+        #     group_to_plot,
+        #     file_id="white",
+        #     bins=50,
+        #     alpha=0.5,
+        #     density=True,
+        #     lw=5,
+        #     cumulative=True,
+        #     histtype="step",
+        # )
 
 
 
