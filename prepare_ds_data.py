@@ -28,23 +28,24 @@ def most_common_topics(n=16, dir=DATA_DIR):
     return topics
 
 
-def wget_topic_images(topic, save_dir):
+def wget_topic_images(topic, save_dir, verbose=False):
     dsa = load_ds()
     urls = dsa[np.where(dsa['topics'] == topic)]['imageUrl']
     fn = topic + 'urls.txt'
     with open(fn, 'w') as f:
         f.write('\n'.join(urls))
-    os.system(f'wget -nc -v -i {fn} -P {save_dir}')
+    v = '-v' if verbose else ''
+    os.system(f'wget -nc {v} -i {fn} -P {save_dir}')
 
 
-def wget_most_common_topic_images(save_dir, n=16):
+def wget_most_common_topic_images(save_dir, n=16, verbose=False):
     topics = most_common_topics(n)
     for t in topics:
         print('########################## ' + t + ' ##########################')
-        wget_topic_images(t, save_dir)
+        wget_topic_images(t, save_dir, verbose)
 
 
-def create_income_quantile_images_dict(topic, img_dir, quantile=4):
+def create_income_quantile_images_dict(topic, img_dir=DATA_DIR, quantile=4, file_path=True, filter_existing_path=True):
     dsa = load_ds(img_dir)
     dsa_t = dsa[np.where(dsa['topics'] == topic)]
     q = int(len(dsa_t) / quantile)
@@ -54,15 +55,24 @@ def create_income_quantile_images_dict(topic, img_dir, quantile=4):
     income_quantile_images_dict = {}
 
     def img_path(url):
-       return os.path.join(img_dir, os.path.basename(url))
+        if file_path:
+            return os.path.join(img_dir, os.path.basename(url))
+        else:
+            return url
+
+    def path_filter(paths):
+        if filter_existing_path:
+            return list(filter(os.path.exists, paths))
+        return paths
 
     income_quantile_images_dict['cheap'] = \
-        pd.DataFrame(data={'path': list(filter(os.path.exists, [img_path(url) for url in dsa_cheap['imageUrl']]))})
+        pd.DataFrame(data={'path': path_filter([img_path(url) for url in dsa_cheap['imageUrl']])})
     income_quantile_images_dict['expensive'] = \
-        pd.DataFrame(data={'path': list(filter(os.path.exists, [img_path(url) for url in dsa_expensive['imageUrl']]))})
+        pd.DataFrame(data={'path': path_filter([img_path(url) for url in dsa_expensive['imageUrl']])})
     return income_quantile_images_dict
 
 
 
 if __name__ == '__main__':
-    argh.dispatch_commands([wget_topic_images, wget_most_common_topic_images])
+    argh.dispatch_commands([wget_topic_images, wget_most_common_topic_images,
+                            create_income_quantile_images_dict])

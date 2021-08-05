@@ -651,13 +651,18 @@ DIM_BOUND = None
 # if for large image, we want to scale it down so width and height are no more than a fixed number, e.g. put 1024 here.
 # if not, very few large images are rejected from sampling as the size is too large for the model to accept
 
-topics = prep_ds.most_common_topics(n=16, dir=IMG_DIR_PATH)
+# topics = prep_ds.most_common_topics(n=16, dir=IMG_DIR_PATH)
+topics = ['Everyday shoes']
 
-for topic in topics[2:]:
+for topic in topics:
 
     NUM_ITERATION = 5000
 
     SETTING_NAME = f"{topic}_fixed_height_intersect"  # for saving results and plots
+
+    SAVE_DIR_ATTACHED = data_dir / f"./attached/{topic}/"
+    if not os.path.isdir(SAVE_DIR_ATTACHED):
+        os.mkdir(SAVE_DIR_ATTACHED)
 
 
     # In[184]:
