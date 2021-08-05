@@ -477,7 +477,7 @@ def compute_group_comparison(
         salient_info = None
         while salient_info is None:  # if cmd in get_salient_info failed, resample
             # Sample images as paths
-            sample_img_paths = [(df.sample())["path"].item() for df in df_list]
+            sample_img_paths = [(df.sample())["path"].item() for df in df_list if df]
             attached_img, widths, heights = attach_img(
                 sample_img_paths,
                 fixed_height=fixed_height,
@@ -651,9 +651,9 @@ DIM_BOUND = None
 # if for large image, we want to scale it down so width and height are no more than a fixed number, e.g. put 1024 here.
 # if not, very few large images are rejected from sampling as the size is too large for the model to accept
 
-topics = prep_ds.most_common_topics(n=3, dir=IMG_DIR_PATH)
+topics = prep_ds.most_common_topics(n=16, dir=IMG_DIR_PATH)
 
-for topic in topics:
+for topic in topics[2:]:
 
     NUM_ITERATION = 5000
 
@@ -662,9 +662,8 @@ for topic in topics:
 
     # In[184]:
 
+    print("###################### ", topic, " ######################")
 
-    # from importlib import reload
-    # reload(prep_ds)
     grouped_images_dict = prep_ds.create_income_quantile_images_dict(topic, IMG_DIR_PATH)
     print(list(grouped_images_dict.values())[0])
     all_race_to_compare = list(grouped_images_dict.keys())
@@ -756,7 +755,7 @@ for topic in topics:
     # In[191]:
 
 
-    max_salient_compare_dict
+    # max_salient_compare_dict
 
 
     # In[192]:
@@ -851,14 +850,14 @@ for topic in topics:
 
     # In[199]:
 
-
-    max_salient_all_groups_stats
-
-
-    # In[200]:
-
-
-    max_salient_all_groups_dict
+    #
+    # max_salient_all_groups_stats
+    #
+    #
+    # # In[200]:
+    #
+    #
+    # max_salient_all_groups_dict
 
 
     # In[201]:
