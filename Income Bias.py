@@ -727,7 +727,8 @@ for topic in topics:
           The bar graph plot +- 2 std err, giving 95% confidence interval.
 
           Args:
-              confidence_interval_err: the width of the confidence interval in the plotsetting_name: the setting of this experiment. Only used for the title of the plot and name of the saved figure
+              confidence_interval_err: the width of the confidence interval in the plot
+              setting_name: the setting of this experiment. Only used for the title of the plot and name of the saved figure
               num_iteration: the number of samples used (int or str). Only used for the title of the plot and name of the saved figure
               x_label_angle: angle to rotate the x label. May need to increase for lengthy labels.
               middle_band_width: add two horizontal lines above and below 0.5 symmetrically to the plot, so creating a band of given width.
