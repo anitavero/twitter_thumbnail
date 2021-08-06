@@ -4,6 +4,7 @@ import numpy as np
 import argh
 import pandas as pd
 from collections import Counter
+from matplotlib import pyplot as plt
 
 
 HOME_DIR = os.path.curdir
@@ -19,6 +20,25 @@ def load_ds(dir=DATA_DIR):
     types = [(k.value, 'U500') for k in rows[0][:-1]] + [(rows[0][-1].value, float)]
     dsa = np.array(ds, dtype=types)
     return dsa
+
+
+def plot_ds_stats(dir=DATA_DIR):
+    dsa = load_ds(dir)
+
+    # Image count distribution across topics
+    f1 = plt.figure()
+    topics = Counter(dsa['topics']).most_common()
+    plt.plot([c for t, c in topics])
+    plt.xlabel('Topics')
+    plt.ylabel('#Images')
+    plt.savefig(os.path.join(dir, 'img_topc_distribution.png'))
+
+    # Income distribution
+    f2 = plt.figure()
+    plt.plot(sorted(dsa['income'], reverse=True))
+    plt.xlabel('Images')
+    plt.ylabel('Income')
+    plt.savefig(os.path.join(dir, 'income_distribution.png'))
 
 
 def most_common_topics(n=16, dir=DATA_DIR):
@@ -75,4 +95,4 @@ def create_income_quantile_images_dict(topic, img_dir=DATA_DIR, quantile=4, file
 
 if __name__ == '__main__':
     argh.dispatch_commands([wget_topic_images, wget_most_common_topic_images,
-                            create_income_quantile_images_dict])
+                            create_income_quantile_images_dict, plot_ds_stats])
