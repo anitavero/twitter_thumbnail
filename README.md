@@ -1,4 +1,4 @@
-# twitter_thumbnail
+# Twitter Income Bias
 
 Code for Twitter Algorithmic Bias Challenge (https://hackerone.com/twitter-algorithmic-bias?type=team)
 
