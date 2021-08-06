@@ -1,0 +1,76 @@
+{"stats": [2349, 2651], "num_iterations": 5000, "setting": "Home_fixed_height_intersect"}
+{"stats": [2402, 2598], "num_iterations": 5000, "setting": "Home_no_scaling_intersect_together"}
+{"stats": [3818, 1182], "num_iterations": 5000, "setting": "Floor_fixed_height_intersect"}
+{"stats": [3765, 1235], "num_iterations": 5000, "setting": "Floor_no_scaling_intersect_together"}
+{"stats": [3730, 1270], "num_iterations": 5000, "setting": "Wardrobe_fixed_height_intersect"}
+{"stats": [3596, 1404], "num_iterations": 5000, "setting": "Wardrobe_no_scaling_intersect_together"}
+{"stats": [3980, 1020], "num_iterations": 5000, "setting": "Ceiling_fixed_height_intersect"}
+{"stats": [3953, 1047], "num_iterations": 5000, "setting": "Ceiling_no_scaling_intersect_together"}
+{"stats": [2539, 2461], "num_iterations": 5000, "setting": "Toothbrush_fixed_height_intersect"}
+{"stats": [2558, 2442], "num_iterations": 5000, "setting": "Toothbrush_no_scaling_intersect_together"}
+{"stats": [3182, 1818], "num_iterations": 5000, "setting": "Phone_fixed_height_intersect"}
+{"stats": [3245, 1755], "num_iterations": 5000, "setting": "Phone_no_scaling_intersect_together"}
+{"stats": [2349, 2651], "num_iterations": 5000, "setting": "Home_fixed_height_intersect"}
+{"stats": [2402, 2598], "num_iterations": 5000, "setting": "Home_no_scaling_intersect_together"}
+{"stats": [3818, 1182], "num_iterations": 5000, "setting": "Floor_fixed_height_intersect"}
+{"stats": [3765, 1235], "num_iterations": 5000, "setting": "Floor_no_scaling_intersect_together"}
+{"stats": [2327, 2673], "num_iterations": 5000, "setting": "Front door_fixed_height_intersect"}
+{"stats": [2390, 2610], "num_iterations": 5000, "setting": "Front door_no_scaling_intersect_together"}
+{"stats": [1614, 3386], "num_iterations": 5000, "setting": "Everyday shoes_fixed_height_intersect"}
+{"stats": [1597, 3403], "num_iterations": 5000, "setting": "Everyday shoes_no_scaling_intersect_together"}
+{"stats": [2328, 2672], "num_iterations": 5000, "setting": "Lock on front door_fixed_height_intersect"}
+{"stats": [2235, 2765], "num_iterations": 5000, "setting": "Lock on front door_no_scaling_intersect_together"}
+{"stats": [3580, 1420], "num_iterations": 5000, "setting": "Wardrobe_fixed_height_intersect"}
+{"stats": [3671, 1329], "num_iterations": 5000, "setting": "Wardrobe_no_scaling_intersect_together"}
+{"stats": [3974, 1026], "num_iterations": 5000, "setting": "Ceiling_fixed_height_intersect"}
+{"stats": [3977, 1023], "num_iterations": 5000, "setting": "Ceiling_no_scaling_intersect_together"}
+{"stats": [2920, 2080], "num_iterations": 5000, "setting": "Nicest shoes_fixed_height_intersect"}
+{"stats": [2937, 2063], "num_iterations": 5000, "setting": "Nicest shoes_no_scaling_intersect_together"}
+{"stats": [2109, 2891], "num_iterations": 5000, "setting": "Street view_fixed_height_intersect"}
+{"stats": [2099, 2901], "num_iterations": 5000, "setting": "Street view_no_scaling_intersect_together"}
+{"stats": [2164, 2836], "num_iterations": 5000, "setting": "Street view_fixed_height_intersect"}
+{"stats": [2166, 2834], "num_iterations": 5000, "setting": "Street view_no_scaling_intersect_together"}
+{"stats": [2276, 2724], "num_iterations": 5000, "setting": "Cooking pots_fixed_height_intersect"}
+{"stats": [2315, 2685], "num_iterations": 5000, "setting": "Cooking pots_no_scaling_intersect_together"}
+{"stats": [3430, 1570], "num_iterations": 5000, "setting": "Wall inside_fixed_height_intersect"}
+{"stats": [3399, 1601], "num_iterations": 5000, "setting": "Wall inside_no_scaling_intersect_together"}
+{"stats": [2516, 2484], "num_iterations": 5000, "setting": "Toothbrush_fixed_height_intersect"}
+{"stats": [2567, 2433], "num_iterations": 5000, "setting": "Toothbrush_no_scaling_intersect_together"}
+{"stats": [3222, 1778], "num_iterations": 5000, "setting": "Phone_fixed_height_intersect"}
+{"stats": [3195, 1805], "num_iterations": 5000, "setting": "Phone_no_scaling_intersect_together"}
+{"stats": [2460, 2540], "num_iterations": 5000, "setting": "Grains_fixed_height_intersect"}
+{"stats": [2311, 2689], "num_iterations": 5000, "setting": "Grains_no_scaling_intersect_together"}
+{"stats": [2804, 2196], "num_iterations": 5000, "setting": "Soap for hands and body_fixed_height_intersect"}
+{"stats": [2789, 2211], "num_iterations": 5000, "setting": "Soap for hands and body_no_scaling_intersect_together"}
+{"stats": [1951, 3049], "num_iterations": 5000, "setting": "Dish washing soap_fixed_height_intersect"}
+{"stats": [1921, 3079], "num_iterations": 5000, "setting": "Dish washing soap_no_scaling_intersect_together"}
+{"stats": [2806, 2194], "num_iterations": 5000, "setting": "Kitchen sink_fixed_height_intersect"}
+{"stats": [2773, 2227], "num_iterations": 5000, "setting": "Kitchen sink_no_scaling_intersect_together"}
+{"stats": [2505, 2495], "num_iterations": 5000, "setting": "Wall decoration_fixed_height_intersect"}
+{"stats": [2584, 2416], "num_iterations": 5000, "setting": "Wall decoration_no_scaling_intersect_together"}
+{"stats": [2298, 2702], "num_iterations": 5000, "setting": "Shampoo_fixed_height_intersect"}
+{"stats": [2282, 2718], "num_iterations": 5000, "setting": "Shampoo_no_scaling_intersect_together"}
+{"stats": [1940, 3060], "num_iterations": 5000, "setting": "Spices_fixed_height_intersect"}
+{"stats": [1965, 3035], "num_iterations": 5000, "setting": "Spices_no_scaling_intersect_together"}
+{"stats": [2566, 2434], "num_iterations": 5000, "setting": "Shower_fixed_height_intersect"}
+{"stats": [2574, 2426], "num_iterations": 5000, "setting": "Shower_no_scaling_intersect_together"}
+{"stats": [ 849, 4151], "num_iterations": 5000, "setting": "Water outlet, drainage_fixed_height_intersect"}
+{"stats": [ 873, 4127], "num_iterations": 5000, "setting": "Water outlet, drainage_no_scaling_intersect_together"}
+{"stats": [1539, 3461], "num_iterations": 5000, "setting": "Washing detergent_fixed_height_intersect"}
+{"stats": [1441, 3559], "num_iterations": 5000, "setting": "Washing detergent_no_scaling_intersect_together"}
+{"stats": [2215, 2785], "num_iterations": 5000, "setting": "Books_fixed_height_intersect"}
+{"stats": [2189, 2811], "num_iterations": 5000, "setting": "Books_no_scaling_intersect_together"}
+{"stats": [2866, 2134], "num_iterations": 5000, "setting": "Kitchen_fixed_height_intersect"}
+{"stats": [2873, 2127], "num_iterations": 5000, "setting": "Kitchen_no_scaling_intersect_together"}
+{"stats": [2404, 2596], "num_iterations": 5000, "setting": "Roof_fixed_height_intersect"}
+{"stats": [2443, 2557], "num_iterations": 5000, "setting": "Roof_no_scaling_intersect_together"}
+{"stats": [2057, 2943], "num_iterations": 5000, "setting": "Salt_fixed_height_intersect"}
+{"stats": [2049, 2951], "num_iterations": 5000, "setting": "Salt_no_scaling_intersect_together"}
+{"stats": [2694, 2306], "num_iterations": 5000, "setting": "Power outlet_fixed_height_intersect"}
+{"stats": [2691, 2309], "num_iterations": 5000, "setting": "Power outlet_no_scaling_intersect_together"}
+{"stats": [2406, 2594], "num_iterations": 5000, "setting": "Medication_fixed_height_intersect"}
+{"stats": [2407, 2593], "num_iterations": 5000, "setting": "Medication_no_scaling_intersect_together"}
+{"stats": [3082, 1918], "num_iterations": 5000, "setting": "Street detail_fixed_height_intersect"}
+{"stats": [3101, 1899], "num_iterations": 5000, "setting": "Street detail_no_scaling_intersect_together"}
+{"stats": [2305, 2695], "num_iterations": 5000, "setting": "Tooth paste_fixed_height_intersect"}
+{"stats": [2256, 2744], "num_iterations": 5000, "setting": "Tooth paste_no_scaling_intersect_together"}
